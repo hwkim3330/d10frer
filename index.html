@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontron D10 FRER Configuration Guide</title>
+    <meta name="description" content="IEEE 802.1CB FRER configuration guide for Kontron D10 i-STAX with Microchip LAN9668 switch">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        header .platform {
+            font-size: 0.9em;
+            opacity: 0.8;
+            font-style: italic;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+
+        .hero h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .topology {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            white-space: pre;
+            margin: 20px 0;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .docs-section {
+            margin: 40px 0;
+        }
+
+        .docs-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .docs-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .docs-list li {
+            margin: 15px 0;
+        }
+
+        .docs-list a {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .docs-list a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(10px);
+        }
+
+        .docs-list a::before {
+            content: "📄";
+            font-size: 1.5em;
+            margin-right: 15px;
+        }
+
+        .quick-start {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 8px;
+            margin: 40px 0;
+        }
+
+        .quick-start h2 {
+            margin-bottom: 20px;
+        }
+
+        .quick-start pre {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        .quick-start code {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .port-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+
+        .port-table th,
+        .port-table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        .port-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .port-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .metric-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-box .value {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .metric-box .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        footer {
+            background: #1e1e1e;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .topology {
+                font-size: 0.7em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔄 Kontron D10 FRER Configuration Guide</h1>
+            <div class="subtitle">콘트론 D10 (LAN9668) FRER 양방향 설정 가이드</div>
+            <div class="platform">IEEE 802.1CB Frame Replication and Elimination for Reliability</div>
+            <div style="margin-top: 20px;">
+                <a href="https://github.com/hwkim3330/d10frer" class="btn">GitHub Repository</a>
+                <a href="#quick-start" class="btn btn-secondary">Quick Start</a>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="hero">
+                <h2>Platform Information</h2>
+                <p><strong>Hardware:</strong> Kontron D10 i-STAX</p>
+                <p><strong>Switch IC:</strong> Microchip LAN9668 (8-port Gigabit Ethernet)</p>
+                <p><strong>TSN Features:</strong> IEEE 802.1AS, 802.1Qav, 802.1Qbv, 802.1CB</p>
+                <p><strong>Management:</strong> NETCONF/YANG, Web UI, CLI</p>
+            </div>
+
+            <section class="features">
+                <div class="feature-card">
+                    <h3>✅ Bidirectional FRER</h3>
+                    <p>Both directions protected with redundancy, ensuring zero packet loss for critical traffic.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🔄 Dual Path Redundancy</h3>
+                    <p>Automatic failover with sub-millisecond recovery time for maximum reliability.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>📊 Performance Testing</h3>
+                    <p>Comprehensive latency, throughput, and reliability metrics with real-time monitoring.</p>
+                </div>
+                <div class="feature-card">
+                    <h3>🛠️ Complete Configuration</h3>
+                    <p>Step-by-step setup instructions with automated scripts and Web UI guidance.</p>
+                </div>
+            </section>
+
+            <section class="docs-section">
+                <h2>🏗️ Network Topology</h2>
+
+                <div class="topology">         Device A                Kontron D10            Device B
+      (Generator)                LAN9668 i-STAX       (Analyzer)
+           │                                              │
+           │                Port 4   Port 4              │
+           ├──────────────┐        ┌────────────────────┤
+           │              │        │                    │
+           │         ┌────┴────────┴────┐              │
+           │         │                  │              │
+           │    P4   │   LAN9668 TSN    │  P4          │
+           └────────▶│     Switch       │◀─────────────┘
+                     │   (8 ports)      │
+                ┌────┤  Port 1   Port 2 ├────┐
+                │    └──────┬───┬────────┘    │
+                │           │   │             │
+         Path A │           └───┘             │ Path B
+                │       Direct Link           │
+                │      (Redundancy)           │
+                └─────────────────────────────┘</div>
+
+                <h3>Port Configuration</h3>
+                <table class="port-table">
+                    <thead>
+                        <tr>
+                            <th>Port</th>
+                            <th>Function</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Port 1</strong></td>
+                            <td>Path A</td>
+                            <td>Primary redundant path</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Port 2</strong></td>
+                            <td>Path B</td>
+                            <td>Secondary redundant path</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Port 4 (Left)</strong></td>
+                            <td>Input</td>
+                            <td>Traffic ingress from Device A</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Port 4 (Right)</strong></td>
+                            <td>Output</td>
+                            <td>Traffic egress to Device B</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="docs-section">
+                <h2>📊 Performance Metrics</h2>
+                <div class="metrics">
+                    <div class="metric-box">
+                        <div class="value">~80 µs</div>
+                        <div class="label">Latency with FRER</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="value">0%</div>
+                        <div class="label">Packet Loss</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="value">&lt;1 ms</div>
+                        <div class="label">Failover Time</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="value">6 bytes</div>
+                        <div class="label">R-TAG Overhead</div>
+                    </div>
+                </div>
+            </section>
+
+            <div id="quick-start" class="quick-start">
+                <h2>🚀 Quick Start</h2>
+                <h3>1. Clone Repository</h3>
+                <pre><code>git clone https://github.com/hwkim3330/d10frer.git
+cd d10frer</code></pre>
+
+                <h3>2. Install Dependencies</h3>
+                <pre><code>pip3 install --break-system-packages scapy pyserial netifaces
+pip3 install --break-system-packages pandas matplotlib plotly</code></pre>
+
+                <h3>3. Configure D10 for FRER</h3>
+                <pre><code>python3 scripts/configure_d10_frer.py --ip &lt;D10_IP&gt;</code></pre>
+
+                <h3>4. Run Traffic Test</h3>
+                <pre><code># On Device A (generator)
+sudo python3 scripts/generate_frer_traffic.py --interface enp11s0
+
+# On Device B (analyzer)
+sudo python3 scripts/analyze_frer_traffic.py --interface enp15s0</code></pre>
+            </div>
+
+            <section class="docs-section">
+                <h2>📖 Documentation</h2>
+                <ul class="docs-list">
+                    <li><a href="docs/01_hardware_setup.md">Hardware Setup Guide - Physical connections and cabling for D10</a></li>
+                    <li><a href="docs/02_d10_config.md">D10 i-STAX Configuration - LAN9668 FRER settings via Web UI/CLI</a></li>
+                    <li><a href="docs/03_stream_identification.md">Stream Identification - Configuring stream matching rules</a></li>
+                    <li><a href="docs/04_rtag_format.md">R-TAG Format - Understanding IEEE 802.1CB R-TAG structure</a></li>
+                    <li><a href="docs/05_testing.md">Testing & Validation - Performance testing procedures</a></li>
+                    <li><a href="docs/06_troubleshooting.md">Troubleshooting - Common issues and solutions</a></li>
+                </ul>
+            </section>
+
+            <section class="docs-section">
+                <h2>🎯 Use Cases</h2>
+                <div class="features">
+                    <div class="feature-card">
+                        <h3>🏭 Industrial Automation</h3>
+                        <p>Critical control systems requiring zero packet loss</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>🚗 Automotive Ethernet</h3>
+                        <p>In-vehicle networking with path redundancy</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>⚡ Smart Grid</h3>
+                        <p>Power system communication with high reliability</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>📡 5G Fronthaul</h3>
+                        <p>Low-latency mobile network backhaul</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p><strong>Kontron D10 i-STAX with Microchip LAN9668 TSN Switch</strong></p>
+            <p style="margin: 10px 0;">
+                <a href="https://github.com/hwkim3330/d10frer">GitHub Repository</a> |
+                <a href="https://github.com/hwkim3330/d10frer/issues">Issues</a> |
+                <a href="https://github.com/hwkim3330/d10frer/wiki">Wiki</a>
+            </p>
+            <p style="margin-top: 20px; font-size: 0.9em; opacity: 0.8;">
+                Last Updated: 2025-10-28 | Version: 1.0.0
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
